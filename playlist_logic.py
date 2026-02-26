@@ -73,10 +73,24 @@ def classify_song(song: Song, profile: Dict[str, object]) -> str:
     is_hype_keyword = any(k in genre for k in hype_keywords)
     is_chill_keyword = any(k in title for k in chill_keywords)
 
-    if genre == favorite_genre or energy >= hype_min_energy or is_hype_keyword:
+    # Hype Criteria: Matches favorite genre, high energy, or hype keywords
+    is_hype = (
+        genre == favorite_genre 
+        or energy >= hype_min_energy 
+        or is_hype_keyword
+    )
+
+    # Chill Criteria: Low energy or chill keywords
+    is_chill = (
+        energy <= chill_max_energy 
+        or is_chill_keyword
+    )
+
+    if is_hype:
         return "Hype"
-    if energy <= chill_max_energy or is_chill_keyword:
+    if is_chill:
         return "Chill"
+        
     return "Mixed"
 
 
@@ -101,7 +115,9 @@ def merge_playlists(a: PlaylistMap, b: PlaylistMap) -> PlaylistMap:
     """Merge two playlist maps into a new map."""
     merged: PlaylistMap = {}
     for key in set(list(a.keys()) + list(b.keys())):
-        merged[key] = a.get(key, [])
+        # Create a new list copy from 'a' to avoid modifying the original list
+        merged[key] = list(a.get(key, []))
+        # Extend the new list with songs from 'b'
         merged[key].extend(b.get(key, []))
     return merged
 
