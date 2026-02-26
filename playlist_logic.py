@@ -167,8 +167,11 @@ def search_songs(
     filtered: List[Song] = []
 
     for song in songs:
+        # Get the field value from the song (e.g., "artist"), ensure it's a string, and lowercase it
         value = str(song.get(field, "")).lower()
-        if value and value in q:
+        
+        # Check if the user's query 'q' (e.g., "bee") is inside the song's value (e.g., "beethoven")
+        if value and q in value:
             filtered.append(song)
 
     return filtered
@@ -184,7 +187,7 @@ def lucky_pick(
     elif mode == "chill":
         songs = playlists.get("Chill", [])
     else:
-        songs = playlists.get("Hype", []) + playlists.get("Chill", [])
+        songs = playlists.get("Hype", []) + playlists.get("Chill", []) + playlists.get("Mixed", [])
 
     return random_choice_or_none(songs)
 
